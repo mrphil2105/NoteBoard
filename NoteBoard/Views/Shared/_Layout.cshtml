@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+
+<html lang="da">
+<head>
+
+    <meta charset="utf-8"/>
+    <title>@ViewData["Title"] - NoteBoard</title>
+    <link rel="stylesheet" href="~/css/bootstrap.min.css"/>
+    <link asp-append-version="true" rel="stylesheet" href="~/css/site.css"/>
+
+</head>
+<body>
+
+<header>
+    <nav class="navbar navbar-expand navbar-light bg-light mb-3">
+        <div class="container">
+            <a asp-controller="Home" asp-action="Index" class="navbar-brand">NoteBoard</a>
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">Join board</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">About</a>
+                </li>
+            </ul>
+            <partial name="_LoginPartial"/>
+        </div>
+    </nav>
+</header>
+
+<div class="container">
+    <main role="main">
+        @RenderBody()
+    </main>
+</div>
+
+<script src="~/js/bootstrap.bundle.min.js"></script>
+<script asp-append-version="true" src="~/js/site.js"></script>
+@await RenderSectionAsync("Scripts", false)
+
+</body>
+</html>

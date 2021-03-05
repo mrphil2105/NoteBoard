@@ -1,0 +1,43 @@
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@using NoteBoard.Data
+@inject SignInManager<AppUser> SignInManager
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        string username = User.FindFirstValue(ClaimTypes.Name);
+
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">@username</a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item">My boards</a>
+                </li>
+                <li>
+                    <a class="dropdown-item">Create board</a>
+                </li>
+                <li>
+                    <a class="dropdown-item">Edit profile</a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li>
+                    <form asp-controller="Account" asp-action="Logout">
+                        <button type="submit" class="btn btn-link dropdown-item">Log out</button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a asp-controller="Account" asp-action="Register" class="nav-link">Register</a>
+        </li>
+        <li class="nav-item">
+            <a asp-controller="Account" asp-action="Login" class="nav-link">Log in</a>
+        </li>
+    }
+</ul>
