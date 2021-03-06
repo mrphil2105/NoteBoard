@@ -25,6 +25,8 @@ namespace NoteBoard
 
             services.AddDefaultIdentity<AppUser>(o =>
                 {
+                    o.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
                     o.Password.RequiredLength = 8;
                     o.Password.RequireNonAlphanumeric = false;
                 })
