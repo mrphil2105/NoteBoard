@@ -23,7 +23,11 @@ namespace NoteBoard
                 o.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<AppUser>(o => o.Password.RequireNonAlphanumeric = false)
+            services.AddDefaultIdentity<AppUser>(o =>
+                {
+                    o.Password.RequiredLength = 8;
+                    o.Password.RequireNonAlphanumeric = false;
+                })
                 .AddEntityFrameworkStores<AppDbContext>();
             services.ConfigureApplicationCookie(o => o.LoginPath = "/account/login");
 
