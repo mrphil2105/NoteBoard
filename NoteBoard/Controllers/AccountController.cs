@@ -44,7 +44,7 @@ namespace NoteBoard.Controllers
                 }
             }
 
-            return View();
+            return View(model);
         }
 
         public IActionResult Login(string? returnUrl = null)
