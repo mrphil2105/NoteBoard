@@ -31,11 +31,10 @@ namespace NoteBoard
                     o.Password.RequireNonAlphanumeric = false;
                 })
                 .AddEntityFrameworkStores<AppDbContext>();
-            services.ConfigureApplicationCookie(o => o.LoginPath = "/account/login");
+            services.ConfigureApplicationCookie(o => o.LoginPath = "/Account/Login");
 
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
-            services.AddRouting(o => o.LowercaseUrls = true);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -47,7 +46,7 @@ namespace NoteBoard
             }
             else
             {
-                app.UseExceptionHandler("/home/error");
+                app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
