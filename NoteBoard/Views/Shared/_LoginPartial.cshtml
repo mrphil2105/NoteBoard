@@ -12,10 +12,10 @@
             <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">@username</a>
             <ul class="dropdown-menu">
                 <li>
-                    <a class="dropdown-item">My boards</a>
+                    <a asp-controller="Board" asp-action="List" class="dropdown-item">My boards</a>
                 </li>
                 <li>
-                    <a class="dropdown-item">Create board</a>
+                    <a asp-controller="Board" asp-action="Create" class="dropdown-item">Create board</a>
                 </li>
                 <li>
                     <a class="dropdown-item">Edit profile</a>
