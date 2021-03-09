@@ -1,0 +1,62 @@
+﻿@model IEnumerable<BoardModel>
+
+@{
+    ViewData["Title"] = "My boards";
+}
+
+<h1>My boards</h1>
+
+<div class="row row-cols-xl-4 row-cols-lg-3 row-cols-sm-2 row-cols-1 gx-3">
+    @foreach (var boardModel in Model)
+    {
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">@boardModel.Title</h5>
+                    <p class="card-text">
+                        @if (!string.IsNullOrEmpty(boardModel.Description))
+                        {
+                            <text>@boardModel.Description</text>
+                        }
+                        else
+                        {
+                            <i>No description</i>
+                        }
+                    </p>
+
+                    <div class="mb-3">
+                        <h6>
+                            Created:
+                            <span class="utc-date-time">@boardModel.CreationDate.UtcDateTime.ToString("o")</span>
+                        </h6>
+                        <h6>
+                            Last edit:
+                            <span class="utc-date-time">@boardModel.LastEditDate.UtcDateTime.ToString("o")</span>
+                        </h6>
+                    </div>
+
+                    <a asp-controller="Board" asp-action="Index" asp-route-id="@boardModel.Id" class="btn btn-primary">Go to board</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts
+{
+    <script>
+        (() => {
+            const dateTimeElements = document.getElementsByClassName("utc-date-time");
+            const options = {
+                dateStyle: "long",
+                timeStyle: "short"
+            };
+
+            for (let i = 0; i < dateTimeElements.length; i++) {
+                const element = dateTimeElements[i];
+                const dateTimeString = element.innerText;
+                element.innerText = new Date(dateTimeString).toLocaleString(undefined, options);
+            }
+        })();
+    </script>
+}

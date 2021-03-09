@@ -1,0 +1,25 @@
+﻿@model BoardModel
+
+@{
+    ViewData["Title"] = "Create board";
+}
+
+<div class="col-xl-6 col-md-9 col-12 mx-auto">
+    <h1>Create board</h1>
+
+    <form asp-controller="Board" asp-action="Create">
+        <div asp-validation-summary="All"></div>
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control"/>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+</div>
