@@ -58,7 +58,11 @@ namespace NoteBoard
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(b => b.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}"));
+            app.UseEndpoints(b =>
+            {
+                b.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                b.MapControllerRoute("board", "{id}", new { controller = "Board", action = "Index" });
+            });
         }
     }
 }
