@@ -44,19 +44,5 @@
 
 @section Scripts
 {
-    <script>
-        (() => {
-            const dateTimeElements = document.getElementsByClassName("utc-date-time");
-            const options = {
-                dateStyle: "long",
-                timeStyle: "short"
-            };
-
-            for (let i = 0; i < dateTimeElements.length; i++) {
-                const element = dateTimeElements[i];
-                const dateTimeString = element.innerText;
-                element.innerText = new Date(dateTimeString).toLocaleString(undefined, options);
-            }
-        })();
-    </script>
+    <script asp-append-version="true" src="~/js/list.js"></script>
 }
