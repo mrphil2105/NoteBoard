@@ -7,6 +7,7 @@
     <title>@ViewData["Title"] - NoteBoard</title>
     <link rel="stylesheet" href="~/css/bootstrap.min.css"/>
     <link asp-append-version="true" rel="stylesheet" href="~/css/site.css"/>
+    @await RenderSectionAsync("Styles", false)
 
 </head>
 <body>
