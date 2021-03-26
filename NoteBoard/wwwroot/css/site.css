@@ -1,3 +1,7 @@
 * {
     border-radius: 0 !important;
 }
+
+button:focus, input:focus, textarea:focus {
+    box-shadow: none !important;
+}
