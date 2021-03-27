@@ -203,16 +203,21 @@ namespace NoteBoard.Controllers
             var user = await _dbContext.Users.Include(u => u.Boards)
                 .SingleOrDefaultAsync(u => u.UserName == username);
 
-            var boardModels = user.Boards.Select(b => new BoardModel
+            if (user.Boards.Count > 0)
             {
-                Id = b.Id,
-                Title = b.Title,
-                Description = b.Description,
-                CreationDate = b.CreationDate,
-                LastEditDate = b.LastEditDate
-            });
+                var boardModels = user.Boards.Select(b => new BoardModel
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Description = b.Description,
+                    CreationDate = b.CreationDate,
+                    LastEditDate = b.LastEditDate
+                });
 
-            return View(boardModels);
+                return View(boardModels);
+            }
+
+            return View();
         }
 
         private static string GenerateBoardId()
