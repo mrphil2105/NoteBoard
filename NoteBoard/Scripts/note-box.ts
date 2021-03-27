@@ -27,6 +27,7 @@ export class EditableNoteBox extends NoteBox {
         this.contentTextBox = contentTextBox;
 
         this.prepareInputs();
+        this.autoGrowContent();
     }
 
     private prepareInputs() {
@@ -103,7 +104,7 @@ export class EditableNoteBox extends NoteBox {
 
     private autoGrowContent() {
         this.contentTextBox.style.height = "0";
-        this.contentTextBox.style.height = (this.contentTextBox.scrollHeight + 2) + "px";
+        this.contentTextBox.style.height = (this.contentTextBox.scrollHeight + 8) + "px";
     }
 
     //
