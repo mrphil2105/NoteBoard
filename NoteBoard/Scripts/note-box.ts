@@ -34,7 +34,7 @@ export class EditableNoteBox extends NoteBox {
         this.contentTextBox.addEventListener("input", this.restartAutoSubmit.bind(this));
 
         // Auto grow and shrink the textarea on input.
-        this.contentTextBox.addEventListener("input", EditableNoteBox.autoGrowTextArea);
+        this.contentTextBox.addEventListener("input", this.autoGrowContent.bind(this));
     }
 
     private restartAutoSubmit() {
@@ -101,6 +101,11 @@ export class EditableNoteBox extends NoteBox {
         this.captionTextBox.placeholder = "Give me a caption";
     }
 
+    private autoGrowContent() {
+        this.contentTextBox.style.height = "0";
+        this.contentTextBox.style.height = (this.contentTextBox.scrollHeight + 2) + "px";
+    }
+
     //
     // Status indication
     //
@@ -127,16 +132,5 @@ export class EditableNoteBox extends NoteBox {
 
     private clearIndication() {
         this.noteDiv.classList.remove("waiting", "saving", "saved");
-    }
-
-    //
-    // Static helpers
-    //
-
-    private static autoGrowTextArea(event: Event) {
-        const textArea = event.target as HTMLTextAreaElement;
-
-        textArea.style.height = "0";
-        textArea.style.height = (textArea.scrollHeight + 2) + "px";
     }
 }
