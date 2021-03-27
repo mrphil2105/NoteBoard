@@ -10,6 +10,7 @@
 }
 
 .note {
+    position: relative;
     min-height: 10rem;
     padding: .5rem;
     border-right-style: solid;
@@ -35,4 +36,31 @@ input.note-caption {
 textarea.note-content {
     min-height: 5rem;
     resize: none;
+}
+
+/*
+ * Status indication
+ */
+
+.note.waiting:after, .note.saving:after, .note.saved:after {
+    position: absolute;
+    bottom: .25rem;
+    right: .375rem;
+    font-size: .6875rem;
+}
+
+.note.waiting:after {
+    content: "Waiting..."
+}
+
+.note.saving:after {
+    content: "Saving...";
+}
+
+.note.saved:after {
+    content: "Saved!"
+}
+
+.note.waiting textarea.note-content, .note.saving textarea.note-content, .note.saved textarea.note-content {
+    margin-bottom: 1rem;
 }

@@ -17,6 +17,7 @@ export class EditableNoteBox extends NoteBox {
     private readonly contentTextBox: HTMLTextAreaElement;
 
     private submitTimeoutId: number;
+    private clearIndicationTimeoutId: number;
 
     public constructor(boardId: string, noteDiv: HTMLDivElement, captionTextBox: HTMLInputElement,
                        contentTextBox: HTMLTextAreaElement) {
@@ -41,11 +42,18 @@ export class EditableNoteBox extends NoteBox {
 
         if (this.captionTextBox.value || this.contentTextBox.value) {
             this.submitTimeoutId = setTimeout(this.submit.bind(this), 1000);
+            this.indicateWaiting();
+        } else {
+            // We never submit an empty note, clear the indication.
+            this.clearIndication();
         }
     }
 
     private submit() {
-        this.hasBeenCreated() ? this.update() : this.create();
+        this.indicateSaving();
+
+        (this.hasBeenCreated() ? this.update() : this.create())
+            .then(this.indicateSaved.bind(this));
     }
 
     private create() {
@@ -92,6 +100,38 @@ export class EditableNoteBox extends NoteBox {
         this.noteDiv.id = "note-" + id;
         this.captionTextBox.placeholder = "Give me a caption";
     }
+
+    //
+    // Status indication
+    //
+
+    private indicateWaiting() {
+        // Used to prevent the indication from being cleared, if the user starts typing before the timeout.
+        clearTimeout(this.clearIndicationTimeoutId);
+
+        this.clearIndication();
+        this.noteDiv.classList.add("waiting");
+    }
+
+    private indicateSaving() {
+        this.clearIndication();
+        this.noteDiv.classList.add("saving");
+    }
+
+    private indicateSaved() {
+        this.clearIndication();
+        this.noteDiv.classList.add("saved");
+
+        this.clearIndicationTimeoutId = setTimeout(this.clearIndication.bind(this), 5000);
+    }
+
+    private clearIndication() {
+        this.noteDiv.classList.remove("waiting", "saving", "saved");
+    }
+
+    //
+    // Static helpers
+    //
 
     private static autoGrowTextArea(event: Event) {
         const textArea = event.target as HTMLTextAreaElement;
