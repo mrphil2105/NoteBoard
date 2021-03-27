@@ -3,3 +3,28 @@
 @{
     ViewData["Title"] = Model?.Title ?? "Board not found";
 }
+
+@if (Model != null)
+{
+    <h2>@Model.Title</h2>
+    <h4>@Model.Description</h4>
+
+    <div id="board" class="row row-cols-xl-4 row-cols-lg-3 row-cols-sm-2 row-cols-1 g-0"></div>
+}
+else
+{
+    <div class="text-center">
+        <h1>:(</h1>
+        <h3>This board does not appear to exist</h3>
+    </div>
+}
+
+@section Styles
+{
+    <link asp-append-version="true" rel="stylesheet" href="~/css/board.css"/>
+}
+
+@section Scripts
+{
+    <script asp-append-version="true" type="module" src="~/js/board.js"></script>
+}

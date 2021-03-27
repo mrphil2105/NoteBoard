@@ -1,0 +1,38 @@
+﻿#board, .note {
+    border-color: rgba(0, 0, 0, .2);
+    border-width: 1px;
+}
+
+#board {
+    margin-bottom: 1rem;
+    border-left-style: solid;
+    border-top-style: solid;
+}
+
+.note {
+    min-height: 10rem;
+    padding: .5rem;
+    border-right-style: solid;
+    border-bottom-style: solid;
+}
+
+.note-caption, .note-content {
+    margin-bottom: 0;
+    padding: .375rem .625rem;
+}
+
+input.note-caption, textarea.note-content {
+    background-color: #eee !important;
+}
+
+input.note-caption {
+    margin-bottom: .5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+textarea.note-content {
+    min-height: 5rem;
+    resize: none;
+}
