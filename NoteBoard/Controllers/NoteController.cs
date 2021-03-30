@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NoteBoard.Data;
@@ -15,12 +14,10 @@ namespace NoteBoard.Controllers
     public class NoteController : Controller
     {
         private readonly AppDbContext _dbContext;
-        private readonly UserManager<AppUser> _userManager;
 
-        public NoteController(AppDbContext dbContext, UserManager<AppUser> userManager)
+        public NoteController(AppDbContext dbContext)
         {
             _dbContext = dbContext;
-            _userManager = userManager;
         }
 
         public async Task<IActionResult> GetAll(string boardId)
