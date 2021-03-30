@@ -120,16 +120,15 @@ namespace NoteBoard.Controllers
             {
                 if (!TryGetAccessToken(out string? accessToken))
                 {
-                    return Json(new
+                    return Json(new SuccessResponse
                     {
-                        Success = false,
                         Message = "The cookie for the access token is not set, do you have cookies disabled?"
                     });
                 }
 
                 if (accessToken != note.AccessToken)
                 {
-                    return Json(new { Success = false, Message = "You do not have access to this note." });
+                    return Json(new SuccessResponse { Message = "You do not have access to this note." });
                 }
 
                 note.Caption = model.Caption?.Trim() ?? string.Empty;
@@ -138,7 +137,7 @@ namespace NoteBoard.Controllers
 
                 await _dbContext.SaveChangesAsync();
 
-                return Json(new { Success = true });
+                return Json(new SuccessResponse { Success = true });
             }
 
             return NotFound();
@@ -196,6 +195,18 @@ namespace NoteBoard.Controllers
             accessToken = Request.Cookies["NoteAccessToken"];
 
             return IsAccessTokenValid(accessToken);
+        }
+
+        private class SuccessResponse
+        {
+            public bool Success { get; init; }
+
+            public string Message { get; init; }
+        }
+
+        private class SuccessResponse<T> : SuccessResponse
+        {
+            public T Value { get; init; }
         }
     }
 }
