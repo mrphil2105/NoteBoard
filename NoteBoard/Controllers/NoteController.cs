@@ -78,7 +78,10 @@ namespace NoteBoard.Controllers
             {
                 if (!TryGetAccessToken(out string? accessToken))
                 {
-                    return Json(0);
+                    return Json(new SuccessResponse
+                    {
+                        Message = "The cookie for the access token is not set, do you have cookies disabled?"
+                    });
                 }
 
                 var currentTime = DateTimeOffset.Now;
@@ -97,7 +100,7 @@ namespace NoteBoard.Controllers
                 _dbContext.Notes.Add(note);
                 await _dbContext.SaveChangesAsync();
 
-                return Json(note.Id);
+                return Json(new SuccessResponse<int> { Success = true, Value = note.Id });
             }
 
             return NotFound();
