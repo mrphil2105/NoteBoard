@@ -70,7 +70,14 @@ export class EditableNoteBox extends NoteBox {
             body: JSON.stringify(this.getBody())
         })
             .then(response => response.json())
-            .then(this.markAsCreated.bind(this));
+            .then((result: ISuccessResponse<number>) => {
+                if (!result.success) {
+                    alert("Error: " + result.message);
+                    return;
+                }
+
+                this.markAsCreated(result.value);
+            });
     }
 
     private update() {
