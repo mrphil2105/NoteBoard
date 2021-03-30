@@ -33,6 +33,7 @@ namespace NoteBoard.Controllers
             {
                 var noteModels = board.Notes.Select(n =>
                     new NoteModel { Id = n.Id, Caption = n.Caption, Content = n.Content });
+
                 var boardModel = new BoardModel
                 {
                     Id = board.Id,
