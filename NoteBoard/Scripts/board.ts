@@ -27,12 +27,12 @@ interface INoteModel {
     }
 
     function getNotes(): Promise<INoteModel[]> {
-        return fetch(`/Board/GetNotes/?boardId=${boardId}`)
+        return fetch(`/Note/GetAll/?boardId=${boardId}`)
             .then(response => response.json());
     }
 
     function getOwnedNotes(): Promise<number[]> {
-        return fetch(`/Board/GetOwnedNotes/?boardId=${boardId}`)
+        return fetch(`/Note/GetOwned/?boardId=${boardId}`)
             .then(response => response.json());
     }
 

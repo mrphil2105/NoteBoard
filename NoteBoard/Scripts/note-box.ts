@@ -58,7 +58,7 @@ export class EditableNoteBox extends NoteBox {
     }
 
     private create() {
-        return fetch("/Board/CreateNote/", {
+        return fetch("/Note/Create/", {
             method: "POST",
             headers: this.getHeaders(),
             body: JSON.stringify(this.getBody())
@@ -68,7 +68,7 @@ export class EditableNoteBox extends NoteBox {
     }
 
     private update() {
-        return fetch("/Board/UpdateNote/", {
+        return fetch("/Note/Update/", {
             method: "POST",
             headers: this.getHeaders(),
             body: JSON.stringify(this.getBody())
