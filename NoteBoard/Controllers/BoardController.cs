@@ -43,8 +43,6 @@ namespace NoteBoard.Controllers
                     Notes = noteModels
                 };
 
-                EnsureAccessToken();
-
                 return View(boardModel);
             }
 
