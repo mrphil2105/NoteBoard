@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -45,7 +46,13 @@ namespace NoteBoard.Controllers
 
             if (board != null)
             {
-                string accessToken = GetAccessToken();
+                if (!TryGetAccessToken(out string? accessToken))
+                {
+                    SetAccessToken();
+
+                    return Json(Enumerable.Empty<int>());
+                }
+
                 var ids = board.Notes.Where(n => n.AccessToken == accessToken)
                     .Select(n => n.Id);
 
@@ -69,7 +76,11 @@ namespace NoteBoard.Controllers
 
             if (board != null)
             {
-                string accessToken = GetAccessToken();
+                if (!TryGetAccessToken(out string? accessToken))
+                {
+                    return Json(0);
+                }
+
                 var currentTime = DateTimeOffset.Now;
 
                 var note = new Note
@@ -107,7 +118,14 @@ namespace NoteBoard.Controllers
 
             if (board != null && note != null)
             {
-                string accessToken = GetAccessToken();
+                if (!TryGetAccessToken(out string? accessToken))
+                {
+                    return Json(new
+                    {
+                        Success = false,
+                        Message = "The cookie for the access token is not set, do you have cookies disabled?"
+                    });
+                }
 
                 if (accessToken != note.AccessToken)
                 {
@@ -138,11 +156,11 @@ namespace NoteBoard.Controllers
             return Convert.ToBase64String(bytes);
         }
 
-        private static void CheckAccessToken(string? accessToken)
+        private static bool IsAccessTokenValid([NotNullWhen(true)] string? accessToken)
         {
-            if (accessToken is null)
+            if (accessToken == null)
             {
-                throw new ArgumentNullException(nameof(accessToken));
+                return false;
             }
 
             // 4 * ceiling(n / 3)
@@ -150,51 +168,34 @@ namespace NoteBoard.Controllers
 
             if (accessToken.Length > base64Length)
             {
-                throw new ArgumentException(
-                    $"The specified access token cannot be greater than {base64Length} characters.",
-                    nameof(accessToken));
+                return false;
             }
 
             Span<byte> dummy = stackalloc byte[32];
 
-            if (!Convert.TryFromBase64String(accessToken, dummy, out _))
-            {
-                throw new ArgumentException("The specified access token is invalid.", nameof(accessToken));
-            }
+            return Convert.TryFromBase64String(accessToken, dummy, out _);
         }
 
-        private bool EnsureAccessToken()
+        private void SetAccessToken()
         {
-            string? accessToken = Request.Cookies["NoteAccessToken"];
-
-            if (string.IsNullOrEmpty(accessToken))
+            var options = new CookieOptions
             {
-                var options = new CookieOptions
-                {
-                    // Dirty solution to make the cookie last for a very long time, if possible.
-                    Expires = DateTimeOffset.FromUnixTimeSeconds(int.MaxValue),
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict
-                };
+                // Dirty solution to make the cookie last for a very long time, if possible.
+                Expires = DateTimeOffset.FromUnixTimeSeconds(int.MaxValue),
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            };
 
-                accessToken = GenerateAccessToken();
-                Response.Cookies.Append("NoteAccessToken", accessToken, options);
-
-                return true;
-            }
-
-            CheckAccessToken(accessToken);
-
-            return false;
+            string accessToken = GenerateAccessToken();
+            Response.Cookies.Append("NoteAccessToken", accessToken, options);
         }
 
-        private string GetAccessToken()
+        private bool TryGetAccessToken([NotNullWhen(true)] out string? accessToken)
         {
-            string? accessToken = Request.Cookies["NoteAccessToken"];
-            CheckAccessToken(accessToken);
+            accessToken = Request.Cookies["NoteAccessToken"];
 
-            return accessToken!;
+            return IsAccessTokenValid(accessToken);
         }
     }
 }
