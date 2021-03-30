@@ -1,4 +1,10 @@
-﻿export abstract class NoteBox {
+﻿interface ISuccessResponse<T = void> {
+    success: boolean;
+    message: string;
+    value: T;
+}
+
+export abstract class NoteBox {
     protected readonly boardId: string;
     protected readonly noteDiv: HTMLDivElement;
 
@@ -74,7 +80,7 @@ export class EditableNoteBox extends NoteBox {
             body: JSON.stringify(this.getBody())
         })
             .then(response => response.json())
-            .then(result => !result.success && alert("Error: " + result.message));
+            .then((result: ISuccessResponse) => !result.success && alert("Error: " + result.message));
     }
 
     private getHeaders() {
