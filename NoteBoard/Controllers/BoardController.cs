@@ -26,21 +26,16 @@ namespace NoteBoard.Controllers
 
         public async Task<IActionResult> Index(string id)
         {
-            var board = await _dbContext.Boards.Include(b => b.Notes)
-                .SingleOrDefaultAsync(b => b.Id == id);
+            var board = await _dbContext.Boards.FindAsync(id);
 
             if (board != null)
             {
-                var noteModels = board.Notes.Select(n =>
-                    new NoteModel { Id = n.Id, Caption = n.Caption, Content = n.Content });
-
                 var boardModel = new BoardModel
                 {
                     Id = board.Id,
                     Title = board.Title,
                     Description = board.Description,
-                    LastEditDate = board.LastEditDate,
-                    Notes = noteModels
+                    LastEditDate = board.LastEditDate
                 };
 
                 return View(boardModel);
