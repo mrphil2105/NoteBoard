@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -21,8 +20,5 @@ namespace NoteBoard.Models
 
         [BindNever]
         public DateTimeOffset LastEditDate { get; init; }
-
-        [BindNever]
-        public IEnumerable<NoteModel>? Notes { get; init; }
     }
 }
