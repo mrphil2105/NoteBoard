@@ -73,6 +73,16 @@ namespace NoteBoard.Controllers
 
             if (board != null)
             {
+                const int maxNoteCount = 100;
+
+                if (board.Notes.Count >= maxNoteCount)
+                {
+                    return Json(new SuccessResponse
+                    {
+                        Message = $"This board has reached the maximum limit of {maxNoteCount} notes."
+                    });
+                }
+
                 if (!TryGetAccessToken(out string? accessToken))
                 {
                     return Json(new SuccessResponse
