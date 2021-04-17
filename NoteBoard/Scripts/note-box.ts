@@ -152,3 +152,24 @@ export class EditableNoteBox extends NoteBox {
         this.noteDiv.classList.remove("waiting", "saving", "saved");
     }
 }
+
+export class ReadOnlyNoteBox extends NoteBox {
+    private readonly captionHeading: HTMLHeadingElement;
+    private readonly contentParagraph: HTMLParagraphElement;
+
+    public constructor(boardId: string, noteDiv: HTMLDivElement, captionHeading: HTMLHeadingElement,
+                       contentParagraph: HTMLParagraphElement) {
+        super(boardId, noteDiv);
+
+        this.captionHeading = captionHeading;
+        this.contentParagraph = contentParagraph;
+    }
+
+    public setCaption(caption: string) {
+        this.captionHeading.innerText = caption;
+    }
+
+    public setContent(content: string) {
+        this.contentParagraph.innerText = content;
+    }
+}
