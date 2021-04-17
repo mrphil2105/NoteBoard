@@ -16,6 +16,10 @@ export abstract class NoteBox {
     public getNoteId() {
         return parseInt(this.noteDiv.id.substr("note-".length));
     }
+
+    public removeElement() {
+        this.noteDiv.remove();
+    }
 }
 
 export class EditableNoteBox extends NoteBox {
