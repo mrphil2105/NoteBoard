@@ -14,7 +14,7 @@ export abstract class NoteBox {
     }
 
     public getNoteId() {
-        return this.noteDiv.id.substr("note-".length);
+        return parseInt(this.noteDiv.id.substr("note-".length));
     }
 }
 
