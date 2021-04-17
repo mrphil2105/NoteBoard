@@ -1,5 +1,5 @@
 ﻿// Use .js extension to fix output files importing without .js extension.
-import { EditableNoteBox } from "./note-box.js";
+import { EditableNoteBox, ReadOnlyNoteBox } from "./note-box.js";
 
 interface INoteModel {
     id: number;
@@ -12,6 +12,9 @@ interface INoteModel {
     const boardId = path.substr(path.lastIndexOf("/") + 1);
     const boardDiv = document.getElementById("board") as HTMLDivElement;
 
+    const editableNoteBoxes: EditableNoteBox[] = [];
+    const readOnlyNoteBoxes: ReadOnlyNoteBox[] = [];
+
     loadBoardNotes();
 
     function loadBoardNotes() {
@@ -19,11 +22,28 @@ interface INoteModel {
         const getOwnedPromise = getOwnedNotes();
 
         Promise.all([getNotesPromise, getOwnedPromise])
-            // Add editable note boxes for all owned notes.
-            .then(([noteModels, ownedIds]) => noteModels.filter(noteModel => ownedIds.indexOf(noteModel.id) >= 0)
-                .forEach(noteModel => createEditableNote(noteModel.id, noteModel.caption, noteModel.content)))
-            // Add the editable note box that create a new note.
-            .then(() => createEditableNote(0));
+
+            .then(([noteModels, ownedIds]) => {
+                noteModels.forEach(noteModel => {
+                    const isOwned = ownedIds.indexOf(noteModel.id) >= 0;
+
+                    if (isOwned) {
+                        // Add editable note box for this owned note.
+                        createEditableNote(noteModel.id, noteModel.caption, noteModel.content);
+
+                        return;
+                    }
+
+                    // Add read-only note box for this non-owned note.
+                    createReadOnlyNote(noteModel.id, noteModel.caption, noteModel.content)
+                })
+            })
+            .then(() => {
+                // Add the editable note box that creates a new note.
+                createEditableNote(0);
+                // Start a timer that auto updates every read-only note.
+                setInterval(updateNoteBoxes, 2000);
+            });
     }
 
     function getNotes(): Promise<INoteModel[]> {
@@ -34,6 +54,41 @@ interface INoteModel {
     function getOwnedNotes(): Promise<number[]> {
         return fetch(`/Note/GetOwned/?boardId=${boardId}`)
             .then(response => response.json());
+    }
+
+    function updateNoteBoxes() {
+        getNotes().then(noteModels => {
+            // Update all existing note boxes.
+            const noteBoxesToRemove = readOnlyNoteBoxes.filter(noteBox => {
+                const noteModel = noteModels.find(noteModel => noteModel.id === noteBox.getNoteId());
+
+                if (!noteModel) {
+                    noteBox.removeElement();
+
+                    return true;
+                }
+
+                noteBox.setCaption(noteModel.caption);
+                noteBox.setContent(noteModel.content);
+
+                return false;
+            });
+
+            // Remove the detached read-only note boxes from the array.
+            noteBoxesToRemove.forEach(noteBox => {
+                const index = readOnlyNoteBoxes.indexOf(noteBox);
+                readOnlyNoteBoxes.splice(index, 1);
+            });
+
+            // Add any newly created notes to the board.
+            noteModels.filter(noteModel => {
+                const isAddedAsEditable = editableNoteBoxes.find(noteBox => noteBox.getNoteId() === noteModel.id);
+                const isAddedAsReadOnly = readOnlyNoteBoxes.find(noteBox => noteBox.getNoteId() === noteModel.id);
+
+                return !isAddedAsEditable && !isAddedAsReadOnly;
+            })
+                .forEach(noteModel => createReadOnlyNote(noteModel.id, noteModel.caption, noteModel.content));
+        });
     }
 
     function createEditableNote(noteId: number, caption: string = "", content: string = "") {
@@ -57,6 +112,28 @@ interface INoteModel {
         contentTextBox.value = content;
         noteDiv.appendChild(contentTextBox);
 
-        new EditableNoteBox(boardId, noteDiv, captionTextBox, contentTextBox);
+        const noteBox = new EditableNoteBox(boardId, noteDiv, captionTextBox, contentTextBox);
+        editableNoteBoxes.push(noteBox);
+    }
+
+    function createReadOnlyNote(noteId: number, caption: string, content: string) {
+        const noteDiv = document.createElement("div");
+        noteDiv.id = "note-" + noteId;
+        noteDiv.className = "col note";
+        const creatorNoteBox = document.getElementById("note-0");
+        boardDiv.insertBefore(noteDiv, creatorNoteBox);
+
+        const captionHeading = document.createElement("h5");
+        captionHeading.className = "note-caption";
+        captionHeading.innerText = caption;
+        noteDiv.appendChild(captionHeading);
+
+        const contentParagraph = document.createElement("p");
+        contentParagraph.className = "note-content";
+        contentParagraph.innerText = content;
+        noteDiv.appendChild(contentParagraph);
+
+        const noteBox = new ReadOnlyNoteBox(boardId, noteDiv, captionHeading, contentParagraph);
+        readOnlyNoteBoxes.push(noteBox);
     }
 })();
