@@ -63,8 +63,6 @@ interface INoteModel {
                 const noteModel = noteModels.find(noteModel => noteModel.id === noteBox.getNoteId());
 
                 if (!noteModel) {
-                    noteBox.removeElement();
-
                     return true;
                 }
 
@@ -74,8 +72,11 @@ interface INoteModel {
                 return false;
             });
 
-            // Remove the detached read-only note boxes from the array.
+            // Remove the read-only note boxes from the array.
             noteBoxesToRemove.forEach(noteBox => {
+                // Remove the associated DOM element.
+                noteBox.removeElement();
+
                 const index = readOnlyNoteBoxes.indexOf(noteBox);
                 readOnlyNoteBoxes.splice(index, 1);
             });
