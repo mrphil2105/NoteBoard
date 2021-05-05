@@ -22,7 +22,6 @@ interface INoteModel {
         const getOwnedPromise = getOwnedNotes();
 
         Promise.all([getNotesPromise, getOwnedPromise])
-
             .then(([noteModels, ownedIds]) => {
                 noteModels.forEach(noteModel => {
                     const isOwned = ownedIds.indexOf(noteModel.id) >= 0;
