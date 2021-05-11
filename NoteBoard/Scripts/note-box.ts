@@ -27,6 +27,7 @@ export class EditableNoteBox extends NoteBox {
     private readonly contentTextBox: HTMLTextAreaElement;
 
     private submitTimeoutId: number;
+    private deleteTimeoutId: number;
     private clearIndicationTimeoutId: number;
 
     public constructor(boardId: string, noteDiv: HTMLDivElement, captionTextBox: HTMLInputElement,
@@ -50,13 +51,14 @@ export class EditableNoteBox extends NoteBox {
 
     private restartAutoSubmit() {
         clearTimeout(this.submitTimeoutId);
+        clearTimeout(this.deleteTimeoutId);
 
         if (this.captionTextBox.value || this.contentTextBox.value) {
             this.submitTimeoutId = setTimeout(this.submit.bind(this), 1000);
             this.indicateWaiting();
         } else {
-            // We never submit an empty note, clear the indication.
-            this.clearIndication();
+            this.deleteTimeoutId = setTimeout(this.delete.bind(this), 5000);
+            this.indicateDeleting();
         }
     }
 
@@ -92,6 +94,23 @@ export class EditableNoteBox extends NoteBox {
         })
             .then(response => response.json())
             .then((result: ISuccessResponse) => !result.success && alert("Error: " + result.message));
+    }
+
+    private delete() {
+        return fetch("/Note/Delete/", {
+            method: "POST",
+            headers: this.getHeaders(),
+            body: JSON.stringify(this.getNoteId())
+        })
+            .then(response => response.json())
+            .then((result: ISuccessResponse) => {
+                if (result.success) {
+                    this.removeElement();
+                    return;
+                }
+
+                alert("Error: " + result.message);
+            });
     }
 
     private getHeaders() {
@@ -148,8 +167,16 @@ export class EditableNoteBox extends NoteBox {
         this.clearIndicationTimeoutId = setTimeout(this.clearIndication.bind(this), 5000);
     }
 
+    private indicateDeleting() {
+        // Used to prevent the indication from being cleared, if the user starts typing before the timeout.
+        clearTimeout(this.clearIndicationTimeoutId);
+
+        this.clearIndication();
+        this.noteDiv.classList.add("deleting");
+    }
+
     private clearIndication() {
-        this.noteDiv.classList.remove("waiting", "saving", "saved");
+        this.noteDiv.classList.remove("waiting", "saving", "saved", "deleting");
     }
 }
 

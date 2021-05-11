@@ -153,6 +153,37 @@ namespace NoteBoard.Controllers
             return NotFound();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete([FromHeader] string boardId, [FromBody] int id)
+        {
+            var board = await _dbContext.Boards.Include(b => b.Notes)
+                .SingleOrDefaultAsync(b => b.Id == boardId);
+            var note = board?.Notes.SingleOrDefault(n => n.Id == id);
+
+            if (board != null && note != null)
+            {
+                if (!TryGetAccessToken(out string? accessToken))
+                {
+                    return Json(new SuccessResponse
+                    {
+                        Message = "The cookie for the access token is not set, do you have cookies disabled?"
+                    });
+                }
+
+                if (accessToken != note.AccessToken)
+                {
+                    return Json(new SuccessResponse { Message = "You do not have access to this note." });
+                }
+
+                _dbContext.Notes.Remove(note);
+                await _dbContext.SaveChangesAsync();
+
+                return Json(new SuccessResponse { Success = true });
+            }
+
+            return NotFound();
+        }
+
         //
         // Access token
         //

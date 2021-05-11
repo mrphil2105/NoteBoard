@@ -42,7 +42,7 @@ textarea.note-content {
  * Status indication
  */
 
-.note.waiting:after, .note.saving:after, .note.saved:after {
+.note.waiting:after, .note.saving:after, .note.saved:after, .note.deleting:after {
     position: absolute;
     bottom: .25rem;
     right: .375rem;
@@ -61,6 +61,11 @@ textarea.note-content {
     content: "Saved!"
 }
 
-.note.waiting textarea.note-content, .note.saving textarea.note-content, .note.saved textarea.note-content {
+.note.deleting:after {
+    content: "Deleting..."
+}
+
+.note.waiting textarea.note-content, .note.saving textarea.note-content, .note.saved textarea.note-content,
+.note.deleting textarea.note-content {
     margin-bottom: 1rem;
 }
