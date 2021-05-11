@@ -12,7 +12,6 @@ interface INoteModel {
     const boardId = path.substr(path.lastIndexOf("/") + 1);
     const boardDiv = document.getElementById("board") as HTMLDivElement;
 
-    const editableNoteBoxes: EditableNoteBox[] = [];
     const readOnlyNoteBoxes: ReadOnlyNoteBox[] = [];
 
     loadBoardNotes();
@@ -81,12 +80,7 @@ interface INoteModel {
             });
 
             // Add any newly created notes to the board.
-            noteModels.filter(noteModel => {
-                const isAddedAsEditable = editableNoteBoxes.find(noteBox => noteBox.getNoteId() === noteModel.id);
-                const isAddedAsReadOnly = readOnlyNoteBoxes.find(noteBox => noteBox.getNoteId() === noteModel.id);
-
-                return !isAddedAsEditable && !isAddedAsReadOnly;
-            })
+            noteModels.filter(noteModel => !document.getElementById(`note-${noteModel.id}`))
                 .forEach(noteModel => createReadOnlyNote(noteModel.id, noteModel.caption, noteModel.content));
         });
     }
@@ -112,8 +106,7 @@ interface INoteModel {
         contentTextBox.value = content;
         noteDiv.appendChild(contentTextBox);
 
-        const noteBox = new EditableNoteBox(boardId, noteDiv, captionTextBox, contentTextBox);
-        editableNoteBoxes.push(noteBox);
+        new EditableNoteBox(boardId, noteDiv, captionTextBox, contentTextBox);
     }
 
     function createReadOnlyNote(noteId: number, caption: string, content: string) {
