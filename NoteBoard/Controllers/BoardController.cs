@@ -79,7 +79,7 @@ namespace NoteBoard.Controllers
                 _dbContext.Boards.Add(board);
                 await _dbContext.SaveChangesAsync();
 
-                return RedirectToAction("Index", new { id = boardId });
+                return RedirectToRoute("board", new { id = boardId });
             }
 
             return View(model);
