@@ -26,10 +26,12 @@ namespace NoteBoard.Controllers
 
         public async Task<IActionResult> Index(string id)
         {
+            // Attempt to find the board with the specified id.
             var board = await _dbContext.Boards.FindAsync(id);
 
             if (board != null)
             {
+                // Construct a BoardModel from the board entity.
                 var boardModel = new BoardModel
                 {
                     Id = board.Id,
@@ -61,10 +63,12 @@ namespace NoteBoard.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Get the currently logged in user.
                 var user = await _userManager.GetUserAsync(User);
                 string boardId = GenerateBoardId();
                 var currentTime = DateTimeOffset.Now;
 
+                // Construct a new Board with the generated id and model title, model description and metadata.
                 var board = new Board
                 {
                     Id = boardId,
@@ -79,6 +83,7 @@ namespace NoteBoard.Controllers
                 _dbContext.Boards.Add(board);
                 await _dbContext.SaveChangesAsync();
 
+                // Redirect to the board viewing page.
                 return RedirectToRoute("board", new { id = boardId });
             }
 
@@ -88,12 +93,15 @@ namespace NoteBoard.Controllers
         [Authorize]
         public async Task<IActionResult> List()
         {
+            // Find the currently logged in user's username via the claim.
             string username = User.FindFirstValue(ClaimTypes.Name);
+            // Find the user entity using the username and include the boards in the query results.
             var user = await _dbContext.Users.Include(u => u.Boards)
                 .SingleOrDefaultAsync(u => u.UserName == username);
 
             if (user.Boards.Count > 0)
             {
+                // Construct a collection of BoardModel from the board entities.
                 var boardModels = user.Boards.Select(b => new BoardModel
                 {
                     Id = b.Id,

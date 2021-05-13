@@ -17,9 +17,11 @@ namespace NoteBoard.Controllers
         {
             if (_signInManager.IsSignedIn(User))
             {
+                // User is signed in, redirect to the board list.
                 return RedirectToAction("List", "Board");
             }
 
+            // User is not signed in, redirect to the login page.
             return RedirectToAction("Login", "Account");
         }
     }

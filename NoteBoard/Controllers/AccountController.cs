@@ -35,9 +35,11 @@ namespace NoteBoard.Controllers
                 {
                     await _signInManager.SignInAsync(user, false);
 
+                    // Registration was successful, redirect to the home page.
                     return RedirectToAction("Index", "Home");
                 }
 
+                // Something went wrong, add the error messages to the model errors to display them to the user.
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -67,12 +69,15 @@ namespace NoteBoard.Controllers
                 {
                     if (Url.IsLocalUrl(model.ReturnUrl))
                     {
+                        // Login was successful, redirect to the return URL.
                         return Redirect(model.ReturnUrl);
                     }
 
+                    // Login was successful, redirect to the home page.
                     return RedirectToAction("Index", "Home");
                 }
 
+                // Something went wrong, add an error message to the model errors to display it to the user.
                 ModelState.AddModelError(string.Empty, "The username or password is incorrect.");
             }
 
