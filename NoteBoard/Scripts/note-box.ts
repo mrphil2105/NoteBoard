@@ -14,6 +14,7 @@ export abstract class NoteBox {
     }
 
     public getNoteId() {
+        // Get the note id from the id attribute and parse to int.
         return parseInt(this.noteDiv.id.substr("note-".length));
     }
 
@@ -42,6 +43,7 @@ export class EditableNoteBox extends NoteBox {
     }
 
     private prepareInputs() {
+        // Add event listeners that restart the submission timeout on user input.
         this.captionTextBox.addEventListener("input", this.restartAutoSubmit.bind(this));
         this.contentTextBox.addEventListener("input", this.restartAutoSubmit.bind(this));
 
@@ -50,22 +52,31 @@ export class EditableNoteBox extends NoteBox {
     }
 
     private restartAutoSubmit() {
+        // Every time the user types the timeouts should be cleared.
         clearTimeout(this.submitTimeoutId);
         clearTimeout(this.deleteTimeoutId);
 
+        // One of either or both text boxes should have a value.
         if (this.captionTextBox.value || this.contentTextBox.value) {
+            // Set a timeout that uploads the note.
             this.submitTimeoutId = setTimeout(this.submit.bind(this), 1000);
+            // Indicate that the note will be uploaded in a bit.
             this.indicateWaiting();
         } else {
+            // Set a timeout that deletes the note and the note box.
             this.deleteTimeoutId = setTimeout(this.delete.bind(this), 5000);
+            // Indicate that the note will be deleted in a moment.
             this.indicateDeleting();
         }
     }
 
     private submit() {
+        // Indicate that the note is being uploaded.
         this.indicateSaving();
 
+        // Depending on if the note is an existing one or has yet to be created, it should either be updated or created.
         (this.hasBeenCreated() ? this.update() : this.create())
+            // Indicate that the note has been uploaded after the update/creation.
             .then(this.indicateSaved.bind(this));
     }
 
@@ -82,6 +93,7 @@ export class EditableNoteBox extends NoteBox {
                     return;
                 }
 
+                // The note has been created successfully, change away from the state that creates a new note box.
                 this.markAsCreated(result.value);
             });
     }
@@ -105,6 +117,7 @@ export class EditableNoteBox extends NoteBox {
             .then(response => response.json())
             .then((result: ISuccessResponse) => {
                 if (result.success) {
+                    // The note has been removed, so we remove the note box to reflect that.
                     this.removeElement();
                     return;
                 }
@@ -116,6 +129,7 @@ export class EditableNoteBox extends NoteBox {
     private getHeaders() {
         return {
             "BoardId": this.boardId,
+            // Specify that the content is JSON and that we expect a JSON response.
             "Accept": "application/json",
             "Content-Type": "application/json"
         };
@@ -123,6 +137,7 @@ export class EditableNoteBox extends NoteBox {
 
     private getBody() {
         return {
+            // Indicate what note that needs updating (this will be the "invalid value" 0 when creating a new note).
             "id": this.getNoteId(),
             "caption": this.captionTextBox.value,
             "content": this.contentTextBox.value
@@ -130,11 +145,14 @@ export class EditableNoteBox extends NoteBox {
     }
 
     private hasBeenCreated() {
+        // A note box represents a created note when the id is greater than 0.
         return this.noteDiv.id !== "note-0";
     }
 
     private markAsCreated(id: number) {
+        // Marking a note box as created involves setting its id to a value greater than 0.
         this.noteDiv.id = "note-" + id;
+        // Get rid of the text that says "Type here to create a note".
         this.captionTextBox.placeholder = "Give me a caption";
     }
 
@@ -164,6 +182,7 @@ export class EditableNoteBox extends NoteBox {
         this.clearIndication();
         this.noteDiv.classList.add("saved");
 
+        // Clear the indication after 5 seconds.
         this.clearIndicationTimeoutId = setTimeout(this.clearIndication.bind(this), 5000);
     }
 
